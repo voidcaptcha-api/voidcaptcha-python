@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "voidcaptcha"
+dynamic = ["version"]
+description = "Official Python client for the VoidCaptcha CAPTCHA solving API: Turnstile, reCAPTCHA, Cloudflare Clearance, AWS WAF, DataDome and more."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "VoidCaptcha", email = "support@voidcaptcha.com" }]
+keywords = [
+  "captcha", "captcha-solver", "turnstile", "recaptcha", "cloudflare",
+  "cf_clearance", "aws-waf", "datadome", "funcaptcha", "geetest", "voidcaptcha",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries",
+  "Typing :: Typed",
+]
+dependencies = ["requests>=2.25"]
+
+[project.optional-dependencies]
+test = ["pytest>=7", "responses>=0.23"]
+
+[project.urls]
+Homepage = "https://voidcaptcha.com"
+Documentation = "https://voidcaptcha.com/docs"
+Source = "https://github.com/voidcaptcha-api/voidcaptcha-python"
+Issues = "https://github.com/voidcaptcha-api/voidcaptcha-python/issues"
+Changelog = "https://github.com/voidcaptcha-api/voidcaptcha-python/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/voidcaptcha/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/voidcaptcha", "tests", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/voidcaptcha"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

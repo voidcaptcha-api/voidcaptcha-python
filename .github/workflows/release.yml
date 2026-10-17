@@ -1,0 +1,49 @@
+# Publishes to PyPI when a GitHub release is published.
+#
+# No token is stored anywhere: PyPI trusts this exact workflow file in this
+# exact repository through Trusted Publishing (OIDC). The PyPI side is set up
+# once by the owner; see PUBLISHING.md.
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tag matches package version
+        run: |
+          v=$(python -c "import re;print(re.search(r'\"(.+)\"', open('src/voidcaptcha/_version.py').read()).group(1))")
+          test "v$v" = "${GITHUB_REF_NAME}" || { echo "tag ${GITHUB_REF_NAME} != v$v"; exit 1; }
+      - run: pip install -e ".[test]" build twine
+      - run: pytest -q
+      - run: python -m build
+      - run: twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/voidcaptcha/
+    permissions:
+      id-token: write   # Trusted Publishing; also signs PEP 740 attestations
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
